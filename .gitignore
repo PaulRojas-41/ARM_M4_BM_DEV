@@ -1,0 +1,11 @@
+*.o
+*.d
+*.su
+*.bin
+*.elf
+*.hex
+*.map
+*.cproject
+*.project
+.metadata/
+.settings/

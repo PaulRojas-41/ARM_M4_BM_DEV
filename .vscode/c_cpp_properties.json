@@ -1,0 +1,26 @@
+{
+    "env": {
+        "COMPILER_PATH": "C:/Users/p.tapiarojas/AppData/Local/Programs/gcc-arm-none-eabi-10.3-2021.10-win32/bin/arm-none-eabi-gcc.exe"
+    },
+    "configurations": [
+        {
+            "name": "ARMF4",
+            "includePath": [
+                "${workspaceFolder}/cmsis_lib",
+                "${workspaceFolder}/device"
+            ],
+            "defines": [
+                "_DEBUG",
+                "UNICODE",
+                "_UNICODE",
+                "STM32F407xx"
+            ],
+            "cStandard": "c11",
+            "cppStandard": "c++17",
+            "intelliSenseMode": "clang-x64",
+            "configurationProvider": "ms-vscode.makefile-tools",
+            "compilerPath": "${env:COMPILER_PATH}"
+        }
+    ],
+    "version": 4
+}
