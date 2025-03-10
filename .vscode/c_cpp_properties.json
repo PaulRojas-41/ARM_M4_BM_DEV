@@ -7,7 +7,7 @@
             "name": "ARMF4",
             "includePath": [
                 "${workspaceFolder}/cmsis_lib",
-                "${workspaceFolder}/device"
+                "${workspaceFolder}/stm32f4_device_libs"
             ],
             "defines": [
                 "_DEBUG",

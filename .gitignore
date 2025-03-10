@@ -1,6 +1,8 @@
 *.o
 *.d
 *.su
+*.cyclo
+*.list
 *.bin
 *.elf
 *.hex

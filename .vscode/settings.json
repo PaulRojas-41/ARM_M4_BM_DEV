@@ -1,6 +1,6 @@
 {
     "python.pythonPath": "C:\\Python39\\python.exe",
     "cygwin.terminalRoot": "C:\\cygwin64\\bin",
-    "makefile.makefilePath": "C:\\Users\\p.tapiarojas\\STM32CubeIDE\\workspace_1.17.0\\ARMF4_Bm_Dev\\Debug",
-    "makefile.buildLog": "\"makefile.makefilePath\": \"C:\\\\Users\\\\p.tapiarojas\\\\STM32CubeIDE\\\\workspace_1.17.0\\\\ARMF4_SWP_DEV\\\\Debug\\Compile_Log"
+    "makefile.makefilePath": "C:\\Users\\p.tapiarojas\\STM32CubeIDE\\workspace_1.17.0\\STM32F4_DEV\\Build_Sys",
+    "makefile.buildLog": "\"makefile.makefilePath\": \"C:\\\\Users\\\\p.tapiarojas\\\\STM32CubeIDE\\\\workspace_1.17.0\\\\STM32F4_DEV\\Build_Sys\\Compile_Log"
 }
