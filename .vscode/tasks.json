@@ -7,14 +7,14 @@
                 "label": "build",
                 "type": "shell",
                 "command": "make all",
-                "options":{ "cwd": "${workspaceFolder}/Debug"},
+                "options":{ "cwd": "C:/Users/p.tapiarojas/STM32CubeIDE/workspace_1.17.0/STM32F4_ARM_BMDEV/Build_sys"},
                 "problemMatcher": []
             },
             {
                 "label": "clean",
                 "type": "shell",
                 "command": "make clean",
-                "options":{"cwd": "${workspaceFolder}/Debug"},
+                "options":{"cwd": "C:/Users/p.tapiarojas/STM32CubeIDE/workspace_1.17.0/STM32F4_ARM_BMDEV/Build_sys"},
                 "problemMatcher": []
             },
         ]

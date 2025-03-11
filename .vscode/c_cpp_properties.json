@@ -6,8 +6,9 @@
         {
             "name": "ARMF4",
             "includePath": [
-                "${workspaceFolder}/cmsis_lib",
-                "${workspaceFolder}/stm32f4_device_libs"
+                "C:/Users/p.tapiarojas/STM32CubeIDE/workspace_1.17.0/STM32F4_ARM_BMDEV/cmsis_lib",
+                "C:/Users/p.tapiarojas/STM32CubeIDE/workspace_1.17.0/STM32F4_ARM_BMDEV/stm32f4_device_libs",
+                "C:/Users/p.tapiarojas/STM32CubeIDE/workspace_1.17.0/STM32F4_ARM_BMDEV/Startup"
             ],
             "defines": [
                 "_DEBUG",
