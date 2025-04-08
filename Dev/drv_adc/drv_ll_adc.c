@@ -19,8 +19,6 @@
  #include <stdint.h>
  #include "stm32f4xx.h"
  
- int i;
- 
  int main(void)
  {
      /* Loop forever */
@@ -30,7 +28,7 @@
  
      while(1)
      {
-         for(i=0;i<1000000;i++);
+         for(int i=0;i<1000000;i++);
          GPIOD->ODR ^= (1<<13);
          
      }
