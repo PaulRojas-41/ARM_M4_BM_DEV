@@ -12,8 +12,12 @@ BUILD_ARTIFACT_EXTENSION := elf
 BUILD_ARTIFACT_PREFIX :=
 BUILD_ARTIFACT := $(BUILD_ARTIFACT_PREFIX)$(BUILD_ARTIFACT_NAME)$(if $(BUILD_ARTIFACT_EXTENSION),.$(BUILD_ARTIFACT_EXTENSION),)
 
-# Add inputs and outputs from these tool invocations to the build variables 
+BUILD_ALL := STM32F4_ARM_BMDEV_SW
+BUILD_ARTIFACT_EXTENSION := elf
+BUILD_ARTIFACT_PREFIX :=
+BUILD_ALL_ARTIFACT := $(BUILD_ARTIFACT_PREFIX)$(BUILD_ARTIFACT_NAME)$(if $(BUILD_ARTIFACT_EXTENSION),.$(BUILD_ARTIFACT_EXTENSION),)
 
+# Add inputs and outputs from these tool invocations to the build variables 
 EXECUTABLES += \
 $(BUILD_ARTIFACT_NAME).elf \
 
@@ -29,6 +33,22 @@ $(BUILD_ARTIFACT_NAME).bin
 SIZE_OUTPUT += \
 default.size.stdout \
 
+#Inputs for build complete image
+ALL_EXECUTABLES += \
+$(BUILD_ALL).elf \
+
+ALL_MAP_FILES += \
+$(BUILD_ALL).map \
+
+ALL_OBJDUMP_LIST += \
+$(BUILD_ALL).list \
+
+ALL_BIN_FILES += \
+$(BUILD_ALL).bin
+
+ALL_SIZE_OUTPUT += \
+default.size.stdout \
+
 ####### Build driver ########
 
 #CMSIS libraries 
@@ -39,51 +59,57 @@ DEVICE_LIBS= -I"C:/Users/p.tapiarojas/STM32CubeIDE/workspace_1.17.0/STM32F4_ARM_
 LINKER_FLASH_DIR := C:/Users/p.tapiarojas/STM32CubeIDE/workspace_1.17.0/STM32F4_ARM_BMDEV/Build_sys/Linker/STM32F407VGTX_FLASH.ld
 LINKER_SCRIPT := -T"./Linker/STM32F407VGTX_FLASH.ld"
 
-# Make vars 
+# Make vars for directories 
 OUT_BUILT_DIR := ./Out_built
-DEV_DIR := ../Dev/$(BUILD_ARTIFACT_NAME)
-DEV_SYS := ../Dev/sys_code
-DRV_FILES = $(wildcard $(DEV_DIR)/*.c) 
+DRV_DIR := ../Dev/all_drv/$(BUILD_ARTIFACT_NAME)
+ALL_DRV_DIR := ../Dev/all_drv
+ASM_DIR := ../Startup
 
-# List of objects
-BUILD_OBJS += \
-	./Out_built/obj_drv/$(BUILD_ARTIFACT_NAME).o \
-	./Out_built/obj_asm/startup_stm32f407vgtx.o \
-	./Out_built/obj_sys/syscalls.o \
-	./Out_built/obj_sys/sysmem.o \
+# Make vars for files to build 
+DRV_FILE = $(wildcard $(DRV_DIR)/*)
+ALL_DRV_FILES = $(wildcard $(ALL_DRV_DIR)/**/*)
+ASM_FILE = $(wildcard $(ASM_DIR)/*)
+
+# List of objects to build for a single driver
+BUILD_OBJ += \
+	$(OUT_BUILT_DIR)/obj_drv/$(BUILD_ARTIFACT_NAME).o \
+	$(OUT_BUILT_DIR)/obj_asm/startup_stm32f407vgtx.o \
+	$(OUT_BUILT_DIR)/obj_sys/syscalls.o \
+	$(OUT_BUILT_DIR)/obj_sys/sysmem.o 
+
 
 driver: $(BUILD_ARTIFACT_NAME) binary-build
 
-$(BUILD_ARTIFACT_NAME): $(BUILD_OBJS) $(LINKER_FLASH_DIR) 
-	arm-none-eabi-gcc -o "$@".elf $(BUILD_OBJS) -mcpu=cortex-m4 $(LINKER_SCRIPT) --specs=nosys.specs -Wl,-Map="$@".map -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group 
+$(BUILD_ARTIFACT_NAME): $(BUILD_OBJ) $(LINKER_FLASH_DIR)
+	arm-none-eabi-gcc -o "$@".elf $(BUILD_OBJ) -mcpu=cortex-m4 $(LINKER_SCRIPT) --specs=nosys.specs -Wl,-Map="$@".map -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group 
 	@echo ' '
 	@echo ' [Linking...] '
 	@echo ' '
 	@echo ' [Finished building driver ...] '
 	@echo ' '
 
-./Out_built/obj_drv/%.o: $(DRV_FILES) 
+$(OUT_BUILT_DIR)/obj_drv/%.o: $(DRV_FILE) 
 	@mkdir -p $(@D)
 	arm-none-eabi-gcc "$<" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DSTM32 -DSTM32F4 -DSTM32F407VGTx -DSTM32F407xx -c $(CMSIS_LIBS) $(DEVICE_LIBS) -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"$(@:%.o=%.d)" -MT"$@" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "$@"
 	@echo ' '
 	@echo ' [Building Driver application ...]'
 	@echo ' '
 
-./Out_built/obj_sys/%.o: ../Dev/sys_code/%.c
+$(OUT_BUILT_DIR)/obj_sys/%.o: ../Dev/sys_code/%.c
 	@mkdir -p $(@D)
 	arm-none-eabi-gcc "$<" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DSTM32 -DSTM32F4 -DSTM32F407VGTx -DSTM32F407xx -c $(CMSIS_LIBS) $(DEVICE_LIBS) -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"$(@:%.o=%.d)" -MT"$@" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "$@"
 	@echo ' '
 	@echo ' [Building system code ...]'
 	@echo ' '
 
-./Out_built/obj_asm/startup_stm32f407vgtx.o: ../Startup/startup_stm32f407vgtx.s
+$(OUT_BUILT_DIR)/obj_asm/%.o: $(ASM_FILE)
 	@mkdir -p $(@D)
 	arm-none-eabi-gcc -mcpu=cortex-m4 -g3 -DDEBUG -c -x assembler-with-cpp -MMD -MP -MF"$(@:%.o=%.d)" -MT"$@" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "$@" "$<"
 	@echo ' '
 	@echo '[Assembling ...]'
 	@echo ' '
 
-binary-build: $(BIN_FILES) $(OBJDUMP_LIST) $(SIZE_OUTPUT)
+binary-build: $(BIN_FILES) $(OBJDUMP_LIST) $(SIZE_OUTPUT) 
 	@echo ' '
 	@echo '[Building binary files ...]'
 	@echo ' '
@@ -107,8 +133,10 @@ $(SIZE_OUTPUT): $(EXECUTABLES) $(BUILD_OBJS)
 	@echo ' '
 
 flash: $(BIN_FILES)
-	STM32_Programmer_CLI -c port=SWD -d "$@" 0x08000000 -rst
+	STM32_Programmer_CLI -c port=SWD -d "$<" 0x08000000 -rst
+	@echo ' '
 	@echo '[Flashing driver application into MCU....]'
+	@echo ' '
 
 clean:
 	-$(RM) @echo '[Cleaning ELF and MAP...]' *.elf *.map *bin *.list
@@ -118,12 +146,9 @@ clean:
 ################# TEST SECTION  #################
 
 test2:
-	@echo '[Out built dirs...] $(OUT_BUILD)'
-	@echo '[Driver expansion.....] $(DRV_FILES)'
-	@echo '[Build Objs expansion.....] $(BUILD_OBJS)'
-	@echo '[Build Artifact expansion...] $(BUILD_ARTIFACT)'
-	@echo '[Build Artifact name expansion...] $(BUILD_ARTIFACT_NAME)'
-
+	@echo '[Driver files expansion.....] $(ALL_DRV_FILES)'
+	@echo '[........]'
+	
 ################# TEST SECTION END #################
 
 fail-specified-linker-script-missing:
