@@ -3,19 +3,15 @@
 # Toolchain: GNU Tools for STM32 (12.3.rel1)
 ################################################################################
 
--include ../makefile.init
+-include ../makefile.init 
+-include ../makefile.targets 
 
 RM := rm -rf 
 
-BUILD_ARTIFACT_NAME := drv_dac
+BUILD_ARTIFACT_NAME := drv_adc
 BUILD_ARTIFACT_EXTENSION := elf
 BUILD_ARTIFACT_PREFIX :=
 BUILD_ARTIFACT := $(BUILD_ARTIFACT_PREFIX)$(BUILD_ARTIFACT_NAME)$(if $(BUILD_ARTIFACT_EXTENSION),.$(BUILD_ARTIFACT_EXTENSION),)
-
-BUILD_ALL := STM32F4_ARM_BMDEV_SW
-BUILD_ARTIFACT_EXTENSION := elf
-BUILD_ARTIFACT_PREFIX :=
-BUILD_ALL_ARTIFACT := $(BUILD_ARTIFACT_PREFIX)$(BUILD_ARTIFACT_NAME)$(if $(BUILD_ARTIFACT_EXTENSION),.$(BUILD_ARTIFACT_EXTENSION),)
 
 # Add inputs and outputs from these tool invocations to the build variables 
 EXECUTABLES += \
@@ -33,23 +29,7 @@ $(BUILD_ARTIFACT_NAME).bin
 SIZE_OUTPUT += \
 default.size.stdout \
 
-#Inputs for build complete image
-ALL_EXECUTABLES += \
-$(BUILD_ALL).elf \
-
-ALL_MAP_FILES += \
-$(BUILD_ALL).map \
-
-ALL_OBJDUMP_LIST += \
-$(BUILD_ALL).list \
-
-ALL_BIN_FILES += \
-$(BUILD_ALL).bin
-
-ALL_SIZE_OUTPUT += \
-default.size.stdout \
-
-####### Build driver ########
+######## build driver section ########
 
 #CMSIS libraries 
 CMSIS_LIBS= -I"C:/Users/p.tapiarojas/STM32CubeIDE/workspace_1.17.0/STM32F4_ARM_BMDEV/cmsis_lib"
@@ -69,14 +49,22 @@ ASM_DIR := ../Startup
 DRV_FILE = $(wildcard $(DRV_DIR)/*)
 ALL_DRV_FILES = $(wildcard $(ALL_DRV_DIR)/**/*)
 ASM_FILE = $(wildcard $(ASM_DIR)/*)
+SYS_FILES = $(wildcard ../Dev/sys_code/*)
+
+BUILD_OBJ_DRVS += $(patsubst %.c, ./Out_built/obj_drv/%.o, $(notdir $(ALL_DRV_FILES)))
+BUILD_OBJ_SYS  += $(patsubst %.c, ./Out_built/obj_sys/%.o, $(notdir $(SYS_FILES)))
+BUILD_OBJ_ASM  += $(patsubst %.s, ./Out_built/obj_asm/%.o, $(notdir $(ASM_FILE)))
 
 # List of objects to build for a single driver
 BUILD_OBJ += \
 	$(OUT_BUILT_DIR)/obj_drv/$(BUILD_ARTIFACT_NAME).o \
-	$(OUT_BUILT_DIR)/obj_asm/startup_stm32f407vgtx.o \
-	$(OUT_BUILT_DIR)/obj_sys/syscalls.o \
-	$(OUT_BUILT_DIR)/obj_sys/sysmem.o 
+	$(BUILD_OBJ_ASM) \
+	$(BUILD_OBJ_SYS)
 
+ALL_OBJS += \
+	$(BUILD_OBJ_DRVS) \
+	$(BUILD_OBJ_SYS) \
+	$(BUILD_OBJ_ASM)
 
 driver: $(BUILD_ARTIFACT_NAME) binary-build
 
@@ -146,9 +134,8 @@ clean:
 ################# TEST SECTION  #################
 
 test2:
-	@echo '[Driver files expansion.....] $(ALL_DRV_FILES)'
-	@echo '[........]'
-	
+	@echo '[DRV_FILES expansion.......] $(ALL_DRV_FILES)'
+
 ################# TEST SECTION END #################
 
 fail-specified-linker-script-missing:

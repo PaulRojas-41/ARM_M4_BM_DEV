@@ -19,18 +19,13 @@
  #include <stdint.h>
  #include "stm32f4xx.h"
  
- int main(void)
+ static void dac_test_config(void);
+
+ static void dac_test_config(void)
  {
      /* Loop forever */
  
      RCC->AHB1ENR |= (1<<3);  // activar reloj GPIOD
      GPIOD->MODER |= (1<<(15*2)) | (1<<(14*2)) | (1<<(13*2)) | (1<<(12*2));
- 
-     while(1)
-     {
-         for(int i=0;i<1000000;i++);
-         GPIOD->ODR ^= (1<<15);
-         
-     }
  }
  
