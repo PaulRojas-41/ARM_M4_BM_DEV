@@ -1,14 +1,13 @@
 {
     "env": {
-        "COMPILER_PATH": "C:/Users/p.tapiarojas/AppData/Local/Programs/gcc-arm-none-eabi-10.3-2021.10-win32/bin/arm-none-eabi-gcc.exe"
+        "COMPILER_PATH": "C:/Users/PRojas/Documents/ARM_M4_STM32/ARM_toolchain/arm-gnu-toolchain-14.3.rel1-mingw-w64-i686-arm-none-eabi/bin/arm-none-eabi-gcc.exe"
     },
     "configurations": [
         {
             "name": "ARMF4",
             "includePath": [
-                "C:/Users/p.tapiarojas/STM32CubeIDE/workspace_1.17.0/STM32F4_ARM_BMDEV/cmsis_lib",
-                "C:/Users/p.tapiarojas/STM32CubeIDE/workspace_1.17.0/STM32F4_ARM_BMDEV/stm32f4_device_libs",
-                "C:/Users/p.tapiarojas/STM32CubeIDE/workspace_1.17.0/STM32F4_ARM_BMDEV/Startup"
+                "C:/Users/PRojas/Documents/ARM_M4_STM32/Dev/ARM_M4_BM_DEV/cmsis_lib",
+                "C:/Users/PRojas/Documents/ARM_M4_STM32/Dev/ARM_M4_BM_DEV/stm32f4_device_libs"
             ],
             "defines": [
                 "_DEBUG",

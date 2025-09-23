@@ -8,7 +8,7 @@
 
 RM := rm -rf 
 
-BUILD_ARTIFACT_NAME := drv_adc
+BUILD_ARTIFACT_NAME := drv_gpio
 BUILD_ARTIFACT_EXTENSION := elf
 BUILD_ARTIFACT_PREFIX :=
 BUILD_ARTIFACT := $(BUILD_ARTIFACT_PREFIX)$(BUILD_ARTIFACT_NAME)$(if $(BUILD_ARTIFACT_EXTENSION),.$(BUILD_ARTIFACT_EXTENSION),)
@@ -32,11 +32,11 @@ default.size.stdout \
 ######## build driver section ########
 
 #CMSIS libraries 
-CMSIS_LIBS= -I"C:/Users/p.tapiarojas/STM32CubeIDE/workspace_1.17.0/STM32F4_ARM_BMDEV/cmsis_lib"
-DEVICE_LIBS= -I"C:/Users/p.tapiarojas/STM32CubeIDE/workspace_1.17.0/STM32F4_ARM_BMDEV/stm32f4_device_libs"
+CMSIS_LIBS= -I"C:/Users/PRojas/Documents/ARM_M4_STM32/Dev/ARM_M4_BM_DEV/cmsis_lib"
+DEVICE_LIBS= -I"C:/Users/PRojas/Documents/ARM_M4_STM32/Dev/ARM_M4_BM_DEV/stm32f4_device_libs"
 
 #Linker files 
-LINKER_FLASH_DIR := C:/Users/p.tapiarojas/STM32CubeIDE/workspace_1.17.0/STM32F4_ARM_BMDEV/Build_sys/Linker/STM32F407VGTX_FLASH.ld
+LINKER_FLASH_DIR := C:/Users/PRojas/Documents/ARM_M4_STM32/Dev/ARM_M4_BM_DEV/Build_sys/Linker/STM32F407VGTX_FLASH.ld
 LINKER_SCRIPT := -T"./Linker/STM32F407VGTX_FLASH.ld"
 
 # Make vars for directories 
@@ -78,14 +78,14 @@ $(BUILD_ARTIFACT_NAME): $(BUILD_OBJ) $(LINKER_FLASH_DIR)
 
 $(OUT_BUILT_DIR)/obj_drv/%.o: $(DRV_FILE) 
 	@mkdir -p $(@D)
-	arm-none-eabi-gcc "$<" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DSTM32 -DSTM32F4 -DSTM32F407VGTx -DSTM32F407xx -c $(CMSIS_LIBS) $(DEVICE_LIBS) -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"$(@:%.o=%.d)" -MT"$@" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "$@"
+	arm-none-eabi-gcc "$<" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DSTM32 -DSTM32F4 -DSTM32F407VGTx -DSTM32F407xx -c $(CMSIS_LIBS) $(DEVICE_LIBS) -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"$(@:%.o=%.d)" -MT"$@" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "$@"
 	@echo ' '
 	@echo ' [Building Driver application ...]'
 	@echo ' '
 
 $(OUT_BUILT_DIR)/obj_sys/%.o: ../Dev/sys_code/%.c
 	@mkdir -p $(@D)
-	arm-none-eabi-gcc "$<" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DSTM32 -DSTM32F4 -DSTM32F407VGTx -DSTM32F407xx -c $(CMSIS_LIBS) $(DEVICE_LIBS) -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"$(@:%.o=%.d)" -MT"$@" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "$@"
+	arm-none-eabi-gcc "$<" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DSTM32 -DSTM32F4 -DSTM32F407VGTx -DSTM32F407xx -c $(CMSIS_LIBS) $(DEVICE_LIBS) -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"$(@:%.o=%.d)" -MT"$@" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "$@"
 	@echo ' '
 	@echo ' [Building system code ...]'
 	@echo ' '

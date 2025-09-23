@@ -1,8 +1,8 @@
 {
     "python.pythonPath": "C:\\Python39\\python.exe",
     "cygwin.terminalRoot": "C:\\cygwin64\\bin",
-    "makefile.makefilePath": "C:\\Users\\p.tapiarojas\\STM32CubeIDE\\workspace_1.17.0\\STM32F4_ARM_BMDEV\\Build_Sys",
-    "makefile.buildLog": "\"makefile.makefilePath\": \"C:\\\\Users\\\\p.tapiarojas\\\\STM32CubeIDE\\\\workspace_1.17.0\\\\STM32F4_ARM_BMDEV\\Build_Sys\\Compile_Log",
+    "makefile.makefilePath": "C:\\Users\\PRojas\\Documents\\ARM_M4_STM32\\Dev\\STM32F4_ARM_BMDEV\\Build_sys",
+    "makefile.buildLog": "C:\\Users\\PRojas\\Documents\\ARM_M4_STM32\\Dev\\STM32F4_ARM_BMDEV\\Build_sys",
     "files.associations": {
         "stm32f407xx.h": "c"
     }
