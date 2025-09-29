@@ -22,11 +22,12 @@
  int main(void)
  {
     
-     /* - Enable  CLK Peripheral for GPIO: AHB1ENR
-        - Configure Mode: I/O, GPIOD here as output for led blink */
+     /* - Enable  CLK Peripheral for GPIOD and GPIOA: AHB1ENR
+        - Configure Port Mode: I/O, GPIOD here as output for led blink 
+        - User Push button PA0 = GPIOA reset state is equal to be in Input mode */
       
-     RCC->AHB1ENR |= (1<<3);
-     GPIOD->MODER |= (1<<(13*2)) | (1<<(12*2)); 
+     RCC->AHB1ENR |= (1 << 0) | (1 << 3);
+     GPIOD->MODER |= (1 << (14 * 2)) | (1 <<(13 * 2)) | (1 <<(12 * 2));
     
      /* Loop */
 
@@ -36,6 +37,16 @@
          GPIOD->ODR ^= (1<<12); /* Write value: Toogle LED */
          for(int i=0;i<1000000;i++);
          GPIOD->ODR ^= (1<<13);
+
+         do
+         {
+             GPIOD->ODR |= (1<<14);
+         }while((GPIOA->IDR & 0x01) != 0u);
+         
+         if((GPIOA->IDR & 0x01) == 0u)
+         {
+             GPIOD->ODR &= ~(1 << 14);
+         }
      }
  }
  
