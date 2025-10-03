@@ -7,7 +7,8 @@
             "name": "ARMF4",
             "includePath": [
                 "C:/Users/PRojas/Documents/ARM_M4_STM32/Dev/ARM_M4_BM_DEV/cmsis_lib",
-                "C:/Users/PRojas/Documents/ARM_M4_STM32/Dev/ARM_M4_BM_DEV/stm32f4_device_libs"
+                "C:/Users/PRojas/Documents/ARM_M4_STM32/Dev/ARM_M4_BM_DEV/stm32f4_device_libs",
+                "C:/Users/PRojas/Documents/ARM_M4_STM32/Dev/ARM_M4_BM_DEV/Dev/all_drv/includes" 
             ],
             "defines": [
                 "_DEBUG",

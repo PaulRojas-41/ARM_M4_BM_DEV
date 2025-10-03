@@ -14,21 +14,9 @@
  * If no LICENSE file comes with this software, it is provided AS-IS.
  *
  ******************************************************************************
- */
- #include "stm32f4xx.h"
-
- /* SYSTICK_ENABLE = Enable the counter
-    SYSTICK Countflag = SW can use this bit state to determine if SysTick has ever counted to zero 
-    SYSTICK ClockSource = Selects system or external clock source  */
-
- #define SYSTICK_CSR_ENABLE    (1 << 0)
- #define SYSTICK_CSR_CLOCKSRC  (1 << 2)
- #define SYSTICK_CSR_COUNTFLAG (1 << 16) 
- #define SYSTICK_CYCLES_PER_MS (16000u) 
-
- /* Local prototypes */
- void SysTick_DelayMs(uint32_t delay_ms);
- void SysTick_Init(void);
+*/
+#include "stm32f4xx.h"
+#include "drv_ll_systick.h"
 
 /* Jump into main applicative SW */
 
@@ -48,7 +36,7 @@
         - Clear current value / CountFlag CSR reg
         - Set CSR register: When Enable = 1, counter takes Reload value */
 
-    SysTick_Init();
+    SysTick_init_driver();
 
      /* Loop */
 
@@ -60,24 +48,3 @@
          GPIOD->ODR ^= (1<<15);
      }
 }
-
-/* Local method's implementation */
-
-void SysTick_Init(void)
-{
-    SysTick->LOAD = SYSTICK_CYCLES_PER_MS - 1; 
-    SysTick->VAL  = 0;
-    SysTick->CTRL |= SYSTICK_CSR_ENABLE | SYSTICK_CSR_CLOCKSRC;
-}
-
-void SysTick_DelayMs(uint32_t delay_ms)
-{
-    while(delay_ms)
-    {
-        if(SysTick->CTRL & SYSTICK_CSR_COUNTFLAG)
-        {
-            delay_ms--;
-        }
-    }
-}
- 

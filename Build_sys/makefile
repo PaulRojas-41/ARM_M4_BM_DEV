@@ -8,7 +8,7 @@
 
 RM := rm -rf 
 
-BUILD_ARTIFACT_NAME := drv_gpio
+BUILD_ARTIFACT_NAME := ARM_M4_BM_DEV
 BUILD_ARTIFACT_EXTENSION := elf
 BUILD_ARTIFACT_PREFIX :=
 BUILD_ARTIFACT := $(BUILD_ARTIFACT_PREFIX)$(BUILD_ARTIFACT_NAME)$(if $(BUILD_ARTIFACT_EXTENSION),.$(BUILD_ARTIFACT_EXTENSION),)
@@ -34,6 +34,7 @@ default.size.stdout \
 #CMSIS libraries 
 CMSIS_LIBS= -I"C:/Users/PRojas/Documents/ARM_M4_STM32/Dev/ARM_M4_BM_DEV/cmsis_lib"
 DEVICE_LIBS= -I"C:/Users/PRojas/Documents/ARM_M4_STM32/Dev/ARM_M4_BM_DEV/stm32f4_device_libs"
+DRVS_LIBS= -I"C:/Users/PRojas/Documents/ARM_M4_STM32/Dev/ARM_M4_BM_DEV/Dev/all_drv/includes"
 
 #Linker files 
 LINKER_FLASH_DIR := C:/Users/PRojas/Documents/ARM_M4_STM32/Dev/ARM_M4_BM_DEV/Build_sys/Linker/STM32F407VGTX_FLASH.ld
@@ -47,7 +48,7 @@ ASM_DIR := ../Startup
 
 # Make vars for files to build 
 DRV_FILE = $(wildcard $(DRV_DIR)/*)
-ALL_DRV_FILES = $(wildcard $(ALL_DRV_DIR)/**/*)
+ALL_DRV_FILES = $(wildcard $(ALL_DRV_DIR)/*.c)
 ASM_FILE = $(wildcard $(ASM_DIR)/*)
 SYS_FILES = $(wildcard ../Dev/sys_code/*)
 
@@ -68,24 +69,24 @@ ALL_OBJS += \
 
 driver: $(BUILD_ARTIFACT_NAME) binary-build
 
-$(BUILD_ARTIFACT_NAME): $(BUILD_OBJ) $(LINKER_FLASH_DIR)
-	arm-none-eabi-gcc -o "$@".elf $(BUILD_OBJ) -mcpu=cortex-m4 $(LINKER_SCRIPT) --specs=nosys.specs -Wl,-Map="$@".map -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group 
+$(BUILD_ARTIFACT_NAME): $(ALL_OBJS) $(LINKER_FLASH_DIR)
+	arm-none-eabi-gcc -o "$@".elf $(ALL_OBJS) -mcpu=cortex-m4 $(LINKER_SCRIPT) --specs=nosys.specs -Wl,-Map="$@".map -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group 
 	@echo ' '
 	@echo ' [Linking...] '
 	@echo ' '
 	@echo ' [Finished building driver ...] '
 	@echo ' '
 
-$(OUT_BUILT_DIR)/obj_drv/%.o: $(DRV_FILE) 
+$(OUT_BUILT_DIR)/obj_drv/%.o: $(ALL_DRV_DIR)/%.c 
 	@mkdir -p $(@D)
-	arm-none-eabi-gcc "$<" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DSTM32 -DSTM32F4 -DSTM32F407VGTx -DSTM32F407xx -c $(CMSIS_LIBS) $(DEVICE_LIBS) -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"$(@:%.o=%.d)" -MT"$@" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "$@"
+	arm-none-eabi-gcc "$<" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DSTM32 -DSTM32F4 -DSTM32F407VGTx -DSTM32F407xx -c $(CMSIS_LIBS) $(DEVICE_LIBS) $(DRVS_LIBS) -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"$(@:%.o=%.d)" -MT"$@" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "$@"
 	@echo ' '
 	@echo ' [Building Driver application ...]'
 	@echo ' '
 
 $(OUT_BUILT_DIR)/obj_sys/%.o: ../Dev/sys_code/%.c
 	@mkdir -p $(@D)
-	arm-none-eabi-gcc "$<" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DSTM32 -DSTM32F4 -DSTM32F407VGTx -DSTM32F407xx -c $(CMSIS_LIBS) $(DEVICE_LIBS) -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"$(@:%.o=%.d)" -MT"$@" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "$@"
+	arm-none-eabi-gcc "$<" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DSTM32 -DSTM32F4 -DSTM32F407VGTx -DSTM32F407xx -c $(CMSIS_LIBS) $(DEVICE_LIBS) $(DRVS_LIBS) -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"$(@:%.o=%.d)" -MT"$@" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "$@"
 	@echo ' '
 	@echo ' [Building system code ...]'
 	@echo ' '
@@ -134,7 +135,7 @@ clean:
 ################# TEST SECTION  #################
 
 test2:
-	@echo '[DRV_FILES expansion.......] $(ALL_DRV_FILES)'
+	@echo '[OBJS FILES expansion.......] $(ALL_OBJS)'
 
 ################# TEST SECTION END #################
 
