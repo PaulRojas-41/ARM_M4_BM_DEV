@@ -18,7 +18,22 @@
 #include "stm32f4xx.h"
 #include "drv_ll_systick.h"
 
-/* Jump into main applicative SW */
+#define GPIOA_RCC_AHB1ENR (1 << 0)
+#define GPIOD_RCC_AHB1ENR (1 << 3)
+
+#define GPIO_MODE_OUTPUT (1)
+
+#define GPIOD_BLUE_LED_PD15  (15 *2)
+#define GPIOD_GREEN_LED_PD12 (12 *2)
+
+#define GPIOD_WRITE_OUT_GREEN_LED (1 << 12)
+#define GPIOD_WRITE_OUT_BLUE_LED  (1 << 15)
+
+/* Local methods declaration */
+
+void GPIO_init_driver(void);
+
+ /* Jump into main applicative SW */
 
  int main(void)
  {
@@ -27,14 +42,7 @@
         - Enable  CLK Peripheral for GPIOD and GPIOA: AHB1ENR
         - Configure Port Mode: I/O, GPIOD here as output for led blink 
         - User Push button PA0 = GPIOA reset state is equal to be in Input mode */
-      
-     RCC->AHB1ENR |= (1 << 0) | (1 << 3);
-     GPIOD->MODER |= (1 << (15 * 2)) | (1 <<(12 * 2));
-    
-     /* SysTick drv config:
-        - Write Reload value: number of cycles for each ms delay 
-        - Clear current value / CountFlag CSR reg
-        - Set CSR register: When Enable = 1, counter takes Reload value */
+    GPIO_init_driver();
 
     SysTick_init_driver();
 
@@ -43,8 +51,15 @@
      while(1)
      {
          SysTick_DelayMs(1000u);
-         GPIOD->ODR ^= (1<<12);
+         GPIOD->ODR ^= GPIOD_WRITE_OUT_GREEN_LED;
          SysTick_DelayMs(1000u);
-         GPIOD->ODR ^= (1<<15);
+         GPIOD->ODR ^= GPIOD_WRITE_OUT_BLUE_LED;
      }
+}
+
+/* Local mehthod's definition */
+void GPIO_init_driver(void)
+{
+    RCC->AHB1ENR |= GPIOA_RCC_AHB1ENR | GPIOD_RCC_AHB1ENR;
+    GPIOD->MODER |= (GPIO_MODE_OUTPUT << GPIOD_BLUE_LED_PD15) | (GPIO_MODE_OUTPUT << GPIOD_GREEN_LED_PD12);
 }

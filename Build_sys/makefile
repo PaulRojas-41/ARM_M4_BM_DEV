@@ -31,7 +31,7 @@ default.size.stdout \
 
 ######## build driver section ########
 
-#CMSIS libraries 
+#STM32 and driver's libraries paths
 CMSIS_LIBS= -I"C:/Users/PRojas/Documents/ARM_M4_STM32/Dev/ARM_M4_BM_DEV/cmsis_lib"
 DEVICE_LIBS= -I"C:/Users/PRojas/Documents/ARM_M4_STM32/Dev/ARM_M4_BM_DEV/stm32f4_device_libs"
 DRVS_LIBS= -I"C:/Users/PRojas/Documents/ARM_M4_STM32/Dev/ARM_M4_BM_DEV/Dev/all_drv/includes"

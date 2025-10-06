@@ -27,7 +27,10 @@
 #define SYSTICK_CSR_COUNTFLAG (1 << 16) 
 #define SYSTICK_CYCLES_PER_MS (16000u) 
 
-/* Jump into main applicative SW */
+/* SysTick drv config:
+        - Write Reload value: number of cycles for each ms delay 
+        - Clear current value / CountFlag CSR reg
+        - Set CSR register: When Enable = 1, counter takes Reload value */
 
 void SysTick_init_driver(void)
 {
