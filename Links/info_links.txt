@@ -13,3 +13,5 @@ https://www.st.com/en/development-tools/stsw-link004.html
 [Cortex-M4 user guide]
 Ref manual for systick timer peripheral:
 https://developer.arm.com/documentation/dui0553/b/?lang=en
+
+Ref for NVIC: section 4.3.8
