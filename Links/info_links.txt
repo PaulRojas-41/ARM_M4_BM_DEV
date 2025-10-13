@@ -15,3 +15,6 @@ Ref manual for systick timer peripheral:
 https://developer.arm.com/documentation/dui0553/b/?lang=en
 
 Ref for NVIC: section 4.3.8
+
+[ELF file reference]
+https://www.linuxjournal.com/article/1060
