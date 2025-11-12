@@ -18,6 +18,7 @@
 #include "stm32f4xx.h"
 #include "drv_ll_systick.h"
 #include "drv_ll_exti.h"
+#include "drv_ll_uart.h"
 
 #define GPIOA_RCC_AHB1ENR (1 << 0)
 #define GPIOD_RCC_AHB1ENR (1 << 3)
@@ -36,6 +37,11 @@
 
 void GPIO_init_driver(void);
 
+/* global objects */
+
+volatile uint8_t tx_buffer[] = {"Hola"}; // here we send a message from UART pin
+volatile uint8_t rx_buffer[] = {"TLS"}; // message to be received through UART pin 
+
  /* Jump into main applicative SW */
 
  int main(void)
@@ -43,25 +49,27 @@ void GPIO_init_driver(void);
     GPIO_init_driver();
     SysTick_init_driver();
     EXTI0_init_driver();
+    UART_init_driver();
 
-    /* NVIC configuration:
+    /*   PLACEHOLDER: EXTI NVIC configuration and call
         - Set priority: 0, is the highest
-        - Enable interrupt */
-    NVIC_SetPriority(EXTI0_IRQn, 0);
-    NVIC_EnableIRQ(EXTI0_IRQn);
-    
+        - Enable interrupt
+        - Invoke: void EXTI0_NVIC_call(); */
 
      /* Loop */
      while(1)
-     {
-         SysTick_DelayMs(1000u);
-         GPIOD->ODR ^= GPIOD_OUT_BLUE_LED;
+     {  
+        for(int i =0; i < sizeof(tx_buffer); i++)
+        {
+            UART4->DR = tx_buffer[i];
+            while(!(UART4->SR & (1 << 7)));
+        }
 
-         if(GPIOD->ODR & GPIOD_OUT_GREEN_LED)
-         {
-            SysTick_DelayMs(500u);
-            GPIOD->ODR &= ~GPIOD_OUT_GREEN_LED;
-         }
+        for(int j= 0; j < sizeof(rx_buffer); j++)
+        {
+            UART4->DR = rx_buffer[j];
+            while(!(UART4->SR & (1 << 5)));
+        }
      }
 }
 

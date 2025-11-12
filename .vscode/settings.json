@@ -6,6 +6,7 @@
     "files.associations": {
         "stm32f407xx.h": "c",
         "drv_ll_systick.h": "c",
-        "stm32f4xx.h": "c"
+        "stm32f4xx.h": "c",
+        "drv_ll_uart.h": "c"
     }
 }

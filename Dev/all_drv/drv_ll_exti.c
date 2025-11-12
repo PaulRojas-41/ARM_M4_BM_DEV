@@ -43,3 +43,9 @@ void EXTI0_init_driver(void)
     SYSCFG->EXTICR[0] &= ~SYSCFG_EXTICR1_EXTI0_CLR;
     SYSCFG->EXTICR[0] |= SYSCFG_EXTICR1_EXTI0_PA0; 
 }
+
+void EXTI0_NVIC_call()
+{
+    NVIC_SetPriority(EXTI0_IRQn, 0);
+    NVIC_EnableIRQ(EXTI0_IRQn);
+}

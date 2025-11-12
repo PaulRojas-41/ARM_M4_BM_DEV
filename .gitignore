@@ -4,6 +4,7 @@
 *.cyclo
 *.list
 *.bin
+*.lss
 *.elf
 *.hex
 *.map
