@@ -16,6 +16,7 @@
  ******************************************************************************
 */
 #include "stm32f4xx.h"
+#include "system_stm32f4xx.h"
 #include "drv_ll_systick.h"
 #include "drv_ll_exti.h"
 #include "drv_ll_uart.h"
@@ -33,14 +34,24 @@
 
 #define EXTI0_EDGE_DETECTED (1 << 0)
 
+#define HSI_VALUE    ((uint32_t)16000000U) // Internal high speed oscillator
+#define HSE_VALUE    ((uint32_t)8000000U)  // External high speed oscillator
+#define LSI_VALUE    ((uint32_t)32000U)    // Internal low speed oscillator
+#define LSE_VALUE    ((uint32_t)32768U)    // External low speed oscillator
+
+// Main PLL = N * (source_clock / M) / P
+// HSE = 8 Mhz
+// fCLK =   N * (8Mhz / M) / P
+#define PLL_M   8
+#define PLL_Q   7
+#define PLL_P   2
+#define PLL_N   336
 /* Local methods declaration */
 
+volatile uint8_t txbuffer[] = "UART4 Tx working...\n";
 void GPIO_init_driver(void);
 
 /* global objects */
-
-volatile uint8_t tx_buffer[] = {"Hola"}; // here we send a message from UART pin
-volatile uint8_t rx_buffer[] = {"TLS"}; // message to be received through UART pin 
 
  /* Jump into main applicative SW */
 
@@ -48,32 +59,56 @@ volatile uint8_t rx_buffer[] = {"TLS"}; // message to be received through UART p
  {  
     GPIO_init_driver();
     SysTick_init_driver();
-    EXTI0_init_driver();
-    UART_init_driver();
+    //EXTI0_init_driver();
+    set_sysclk_to_168();
+    //UART_init_driver();
 
     /*   PLACEHOLDER: EXTI NVIC configuration and call
         - Set priority: 0, is the highest
         - Enable interrupt
         - Invoke: void EXTI0_NVIC_call(); */
+	    /* driver config GPIO phase:
+        - RCC GPIOA CLK EN
+        - UART TX/RX pins as alternate function: AF8-PA1-RX(UART4) / AF8-PA0-TX(UART4)
+        - PA0 / PA1 AF GPIO mode  */
+    RCC->AHB1ENR  |= (1 << 0);
+    
+    // RESET PIN MODES & SET THEM TO AF MODE
+
+    GPIOA->MODER &= ~((3 << 0) | (3 << 2));
+    GPIOA->MODER |= (2 << 0) | (2 << 2);
+    GPIOA->OSPEEDR |= 0x0000000A;
+
+    // RESET AF & SET THE AF: AFRL1[3:0]/ RX &  AFRL0[3:0] / TX 
+
+    GPIOA->AFR[0] &= ~((15 << 0) | (15 << 4));
+    GPIOA->AFR[0] |= (8 << 0) | (8 << 4);
+    
+    /* driver config UART phase:
+        - RCC UART4/5 CLK EN
+        - ENABLE UART Periph: RX / TX
+        - BAUD RATE CONFIG : Fclk / 16 * 115200:
+            fractional part = 13
+            mantissa = 22 */
+    RCC->APB1ENR |= (1 << 19);
+    UART4->CR1   |= (1 << 3) | (1 << 2) | (1 << 13);
+    UART4->BRR   |= (22 << 4);
+    UART4->BRR   |= 13;
 
      /* Loop */
      while(1)
      {  
-        for(int i =0; i < sizeof(tx_buffer); i++)
-        {
-            UART4->DR = tx_buffer[i];
-            while(!(UART4->SR & (1 << 7)));
-        }
-
-        for(int j= 0; j < sizeof(rx_buffer); j++)
-        {
-            UART4->DR = rx_buffer[j];
-            while(!(UART4->SR & (1 << 5)));
-        }
+		for(uint32_t i =0; i<sizeof(txbuffer);i++)
+		{
+			UART4->DR = txbuffer[i];
+			while(!(UART4->SR & (1 << 6)));
+	 	}
+		SysTick_DelayMs(1000);
      }
 }
 
 /* Local mehthod's definition */
+
 void GPIO_init_driver(void)
 {
     /* GPIO peripheral drv config: 

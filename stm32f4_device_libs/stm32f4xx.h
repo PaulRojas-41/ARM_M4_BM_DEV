@@ -204,7 +204,7 @@ typedef enum
   * @}
   */
 
-
+extern void set_sysclk_to_168(void);
 /** @addtogroup Exported_macro
   * @{
   */
