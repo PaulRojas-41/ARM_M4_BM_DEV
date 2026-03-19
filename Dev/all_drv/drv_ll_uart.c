@@ -24,9 +24,9 @@
 #define UART4_TX_EN         (1 << 3)
 #define UART4_PERIPHERAL_EN (1 << 13)
 
+void uart_set_baudrate(USART_TypeDef *USARTx, uint32_t PeriphClk,  uint32_t BaudRate);
 
-
-void UART_init_driver(void)
+void UART4_init_driver(void)
 {
     /* driver config GPIO phase:
         - RCC GPIOA CLK EN
@@ -52,9 +52,10 @@ void UART_init_driver(void)
             fractional part = 13
             mantissa = 22 */
     RCC->APB1ENR |= (1 << 19);
-    UART4->CR1   |= UART4_RX_EN | UART4_TX_EN | (1 << 13);
-    UART4->BRR    = (22 << 4);
-    UART4->BRR    = 13;
+    UART4->CR1   |= (1 << 3) | (1 << 2) | (1 << 13);
+    //UART4->BRR   |= (22 << 4);
+    //UART4->BRR   |= 13;
+    uart_set_baudrate(UART4, 42000000, 115200);
 }
 
 void uart_set_baudrate(USART_TypeDef *USARTx, uint32_t PeriphClk,  uint32_t BaudRate)

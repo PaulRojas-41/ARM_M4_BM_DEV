@@ -58,8 +58,8 @@ void SystemInit(void)
 
 
 /*************************************************
-* configure system clock to 168 Mhz
-* this is only tested on stm32f4 discovery board
+* Configure system clock to 168 Mhz:
+* 168Mhz prescaled to 4, matches to 42Mhz for APB1 UART4 peripheral clk
 *************************************************/
 
 void set_sysclk_to_168(void)

@@ -48,7 +48,7 @@
 #define PLL_N   336
 /* Local methods declaration */
 
-volatile uint8_t txbuffer[] = "UART4 Tx working...\n";
+volatile uint8_t txbuffer[] = "UART4 Tx in progress...\n";
 void GPIO_init_driver(void);
 
 /* global objects */
@@ -61,39 +61,7 @@ void GPIO_init_driver(void);
     SysTick_init_driver();
     //EXTI0_init_driver();
     set_sysclk_to_168();
-    //UART_init_driver();
-
-    /*   PLACEHOLDER: EXTI NVIC configuration and call
-        - Set priority: 0, is the highest
-        - Enable interrupt
-        - Invoke: void EXTI0_NVIC_call(); */
-	    /* driver config GPIO phase:
-        - RCC GPIOA CLK EN
-        - UART TX/RX pins as alternate function: AF8-PA1-RX(UART4) / AF8-PA0-TX(UART4)
-        - PA0 / PA1 AF GPIO mode  */
-    RCC->AHB1ENR  |= (1 << 0);
-    
-    // RESET PIN MODES & SET THEM TO AF MODE
-
-    GPIOA->MODER &= ~((3 << 0) | (3 << 2));
-    GPIOA->MODER |= (2 << 0) | (2 << 2);
-    GPIOA->OSPEEDR |= 0x0000000A;
-
-    // RESET AF & SET THE AF: AFRL1[3:0]/ RX &  AFRL0[3:0] / TX 
-
-    GPIOA->AFR[0] &= ~((15 << 0) | (15 << 4));
-    GPIOA->AFR[0] |= (8 << 0) | (8 << 4);
-    
-    /* driver config UART phase:
-        - RCC UART4/5 CLK EN
-        - ENABLE UART Periph: RX / TX
-        - BAUD RATE CONFIG : Fclk / 16 * 115200:
-            fractional part = 13
-            mantissa = 22 */
-    RCC->APB1ENR |= (1 << 19);
-    UART4->CR1   |= (1 << 3) | (1 << 2) | (1 << 13);
-    UART4->BRR   |= (22 << 4);
-    UART4->BRR   |= 13;
+    UART4_init_driver();
 
      /* Loop */
      while(1)
@@ -103,7 +71,7 @@ void GPIO_init_driver(void);
 			UART4->DR = txbuffer[i];
 			while(!(UART4->SR & (1 << 6)));
 	 	}
-		SysTick_DelayMs(1000);
+		SysTick_DelayMs(10000);
      }
 }
 
