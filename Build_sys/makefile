@@ -132,7 +132,7 @@ flash: $(BIN_FILES)
 	STM32_Programmer_CLI -c port=SWD -d "$<" 0x08000000 -rst
 
 clean:
-	-$(RM) @echo '[Cleaning ELF and MAP...]' *.elf *.map *bin *.list
+	-$(RM) @echo '[Cleaning ELF and MAP...]' *.elf *.map *bin *.list *.lss
 	-$(RM) @echo '[Cleaning Out Built dirs...]' $(OUT_BUILT_DIR) 
 	@echo ' '
 

@@ -46,14 +46,16 @@
 #define PLL_Q   7
 #define PLL_P   2
 #define PLL_N   336
+
 /* Local methods declaration */
 
-volatile uint8_t txbuffer[] = "UART4 Tx in progress...\n";
 void GPIO_init_driver(void);
 
 /* global objects */
+uint8_t tx_buffer[5];
+uint8_t rx_buffer[4];
 
- /* Jump into main applicative SW */
+ /* Jump into main applicatif SW */
 
  int main(void)
  {  
@@ -66,12 +68,21 @@ void GPIO_init_driver(void);
      /* Loop */
      while(1)
      {  
-		for(uint32_t i =0; i<sizeof(txbuffer);i++)
+		for(uint8_t i= 0; i < sizeof(rx_buffer); i++)
 		{
-			UART4->DR = txbuffer[i];
+			/* When a character is received, wait until RXNE flag is set, then read data */
+			while(!(UART4->SR & (1 << 5)));
+			rx_buffer[i] = UART4->DR; /* 0xFF & DATA_RX */ 
+		}
+
+		for(uint8_t j = 0; j < sizeof(rx_buffer); j++)
+		{
+			/* If TXE flag is set, write data byte to DR */
 			while(!(UART4->SR & (1 << 6)));
-	 	}
-		SysTick_DelayMs(10000);
+	 		UART4->DR = (rx_buffer[j] & 0xFF);
+		}
+
+		SysTick_DelayMs(4);
      }
 }
 
