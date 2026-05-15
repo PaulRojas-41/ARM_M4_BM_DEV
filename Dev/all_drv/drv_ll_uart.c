@@ -66,3 +66,19 @@ void uart_set_baudrate(USART_TypeDef *USARTx, uint32_t PeriphClk,  uint32_t Baud
 	//  (BaudRate/2U))/BaudRate) simplifies to 1/2 and increase accuracy when rounding in this case 
 	USARTx->BRR = brr_value;
 }
+
+void UART4_write(uint8_t uart4_char)
+{
+    
+	/* If TXE flag is set, write data byte to DR */
+	while(!(UART4->SR & (1 << 6)));
+	UART4->DR = (uart4_char & 0xFF);
+}
+
+uint8_t UART4_read(void)
+{
+    /* When a character is received, wait until RXNE flag is set, then read data */
+	while(!(UART4->SR & (1 << 5)));
+	
+    return UART4->DR; /* 0xFF & DATA_RX */ 
+}

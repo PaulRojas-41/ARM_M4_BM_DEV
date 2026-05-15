@@ -15,8 +15,12 @@
  *
  ******************************************************************************
 */
+
+#include <stdio.h>
+
 #include "stm32f4xx.h"
 #include "system_stm32f4xx.h"
+
 #include "drv_ll_systick.h"
 #include "drv_ll_exti.h"
 #include "drv_ll_uart.h"
@@ -52,10 +56,9 @@
 void GPIO_init_driver(void);
 
 /* global objects */
-uint8_t tx_buffer[5];
-uint8_t rx_buffer[4];
 
- /* Jump into main applicatif SW */
+
+/* Jump into main applicatif SW */
 
  int main(void)
  {  
@@ -65,24 +68,17 @@ uint8_t rx_buffer[4];
     set_sysclk_to_168();
     UART4_init_driver();
 
+    uint8_t message[10];
+    uint8_t message2[] = {"Application executing..."}; 
+
+    
+
      /* Loop */
      while(1)
      {  
-		for(uint8_t i= 0; i < sizeof(rx_buffer); i++)
-		{
-			/* When a character is received, wait until RXNE flag is set, then read data */
-			while(!(UART4->SR & (1 << 5)));
-			rx_buffer[i] = UART4->DR; /* 0xFF & DATA_RX */ 
-		}
 
-		for(uint8_t j = 0; j < sizeof(rx_buffer); j++)
-		{
-			/* If TXE flag is set, write data byte to DR */
-			while(!(UART4->SR & (1 << 6)));
-	 		UART4->DR = (rx_buffer[j] & 0xFF);
-		}
-
-		SysTick_DelayMs(4);
+        scanf("%s", message);
+        //printf("%s",message2);
      }
 }
 
@@ -110,4 +106,20 @@ void EXTI0_IRQHandler(void)
         GPIOD->ODR |= GPIOD_OUT_GREEN_LED; 
         EXTI->PR |= EXTI0_EDGE_DETECTED;
     }
+}
+
+int __io_putchar(uint8_t ch)
+{
+    UART4_write(ch);
+    return ch;
+}
+
+int __io_getchar(void)
+{
+    uint8_t get_char= UART4_read();
+    
+    /*ECHO back to the console */
+    UART4_write(get_char);
+
+    return get_char;
 }
