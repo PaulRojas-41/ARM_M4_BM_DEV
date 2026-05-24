@@ -24,6 +24,7 @@
 #include "drv_ll_systick.h"
 #include "drv_ll_exti.h"
 #include "drv_ll_uart.h"
+#include "drv_ll_flash.h"
 
 #define GPIOA_RCC_AHB1ENR (1 << 0)
 #define GPIOD_RCC_AHB1ENR (1 << 3)
@@ -62,23 +63,35 @@ void GPIO_init_driver(void);
 
  int main(void)
  {  
+    set_sysclk_to_168();
     GPIO_init_driver();
     SysTick_init_driver();
     //EXTI0_init_driver();
-    set_sysclk_to_168();
     UART4_init_driver();
-
-    uint8_t message[10];
-    uint8_t message2[] = {"Application executing..."}; 
-
     
+    /* Messages for UART print*/
+    uint8_t message[] = {"\nFlash written, connect STM32Prg"};
+
+    /* test flash read to copy appl_header */
+
+
+    /* test flash to write new data */
+    uint32_t get_new_header[] = {0xEEEEEEEE, 0xAAAAAAAA,0xFFEEAACC,0xDDDDDDDD};
+    uint32_t get_appl_header[4];
+
+    /* test flash to erase it */
+    drv_unlock_flash();
+    drv_erase_flash();
+    drv_write_flash((uint32_t)0x800C000, get_new_header);
+    drv_read_flash(0x8008000,get_appl_header); 
+    drv_lock_flash(); 
 
      /* Loop */
      while(1)
      {  
 
-        scanf("%s", message);
-        //printf("%s",message2);
+        printf("%s", message);
+        SysTick_DelayMs(1000);
      }
 }
 

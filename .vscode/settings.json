@@ -8,5 +8,6 @@
         "drv_ll_systick.h": "c",
         "stm32f4xx.h": "c",
         "drv_ll_uart.h": "c"
-    }
+    },
+    "cortex-debug.variableUseNaturalFormat": false
 }
