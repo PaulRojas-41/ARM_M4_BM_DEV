@@ -5,6 +5,7 @@
             "name": "Debug STM32F407",
             "type": "cortex-debug", 
             "request": "launch",
+            "breakAfterReset": true,
             "servertype": "stlink",
             "cwd": "${workspaceRoot}",
             // 1. MAKE SURE THIS POINTS TO YOUR ACTUAL COMPILED .elf OR .hex FILE

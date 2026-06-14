@@ -19,7 +19,7 @@ void drv_erase_flash()
 	__disable_irq();
 	while((FLASH->SR & (1 << 16)));
 	FLASH->CR |= (1 << 1);
-	FLASH->CR |= (3 << 3);
+	FLASH->CR |= (2 << 3);
 	FLASH->CR |= (1 << 16);
 	while((FLASH->SR & (1 << 16)));
 	FLASH->CR &=~(1 << 1);

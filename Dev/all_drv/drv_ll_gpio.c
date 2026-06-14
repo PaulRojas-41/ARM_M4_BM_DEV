@@ -83,7 +83,7 @@ void GPIO_init_driver(void);
     drv_unlock_flash();
     drv_erase_flash();
     drv_write_flash((uint32_t)0x800C000, get_new_header);
-    drv_read_flash(0x8008000,get_appl_header); 
+    drv_read_flash((uint32_t)0x800C000,get_appl_header); 
     drv_lock_flash(); 
 
      /* Loop */

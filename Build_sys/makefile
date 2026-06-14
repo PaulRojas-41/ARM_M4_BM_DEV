@@ -26,6 +26,8 @@ $(BUILD_ARTIFACT_NAME).list \
 FILTER_ISR += \
 $(BUILD_ARTIFACT_NAME).lss \
 
+DISSASM_TEXT_SECTION += ./Out_built/obj_drv/drv_ll_gpio.o
+
 BIN_FILES += \
 $(BUILD_ARTIFACT_NAME).bin \
 
@@ -100,7 +102,7 @@ $(OUT_BUILT_DIR)/obj_asm/%.o: $(ASM_FILE)
 	@echo ' '
 	arm-none-eabi-gcc -mcpu=cortex-m4 -g3 -DDEBUG -c -x assembler-with-cpp -MMD -MP -MF"$(@:%.o=%.d)" -MT"$@" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "$@" "$<"
 
-binary-build: $(BIN_FILES) $(OBJDUMP_LIST) $(SIZE_OUTPUT) $(FILTER_ISR)
+binary-build: $(BIN_FILES) $(OBJDUMP_LIST) $(SIZE_OUTPUT)
 $(BIN_FILES): $(BUILD_ARTIFACT)
 	@echo ' '
 	@echo '[Building binary file...]'
@@ -119,11 +121,11 @@ $(SIZE_OUTPUT): $(EXECUTABLES) $(BUILD_OBJS)
 	@echo ' ' 
 	arm-none-eabi-size  $(EXECUTABLES)
 	
-$(FILTER_ISR): $(BUILD_ARTIFACT)
+debug_startup:
 	@echo ' '
-	@echo '[Filtering ISR from application list...]'
+	@echo '[Startup execution:]'
 	@echo ' '
-	arm-none-eabi-objdump -d -z -j .isr_vector $< >> "$@"
+	arm-none-eabi-objdump -d $(DISSASM_TEXT_SECTION)
 
 flash: $(BIN_FILES)
 	@echo ' '
